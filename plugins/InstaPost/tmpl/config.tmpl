@@ -1,0 +1,67 @@
+<h2 id="insta-post-config"><__trans phrase="Instagram Posting"></h2>
+
+<mtapp:settinggroup id="insta-post">
+
+<mt:if name="ip_last_error">
+  <mtapp:statusmsg
+     id="ip-error"
+     class="error">
+     <mt:var name="ip_last_error">
+  </mtapp:statusmsg>
+</mt:if>
+
+<mt:if name="ip_linkages">
+  <mtapp:statusmsg id="ip-already-has-linkages" class="warning">
+    <__trans phrase="This system has already linked with Instagram API.">
+    <__trans phrase="If you change client id, [_1] user(s) losts Instagram posting linkage." params="<mt:var name='ip_linkages' escape='html'>">
+  </mtapp:statusmsg>
+</mt:if>
+
+<mtapp:setting
+  id="ip-redirect-uri"
+  label="<__trans phrase='Redirect URI'>"
+  hint="<__trans phrase='Create an API client application with this redirect URI at:'> <a href='https://instagram.com/developer/clients/manage/' target='_blank'><__trans phrase='Instagram Developer Site'></a>"
+  show_hint="1">
+  <p><mt:var name="ip_redirect_uri"></p>
+  <mt:unless name="reachable_url">
+    <mtapp:statusmsg
+       id="ip-not-reachable-url"
+       class="warning">
+       <__trans phrase="This URL does not seem to be reachable from outside. It will get an error. Please change CGIPath in mt-config.cgi to start with http(s).">
+    </mtapp:statusmsg>
+  </mt:unless>
+</mtapp:setting>
+
+<mtapp:setting
+  id="ip-client-id"
+  label="<__trans phrase='Client ID'>"
+  show_hint="$ip_linkages"
+  hint="$ip_hint">
+  <input type="text" class="text" name="ip_client_id" value="<mt:var name='ip_client_id' escape='html'>" >
+</mtapp:setting>
+
+<mtapp:setting
+  id="ip-client-secret"
+  label="<__trans phrase='Client Secret'>">
+  <input type="text" class="text" name="ip_client_secret" value="<mt:var name='ip_client_secret' escape='html'>" >
+</mtapp:setting>
+
+<mtapp:setting
+  id="ip-default-subscripiton-handler"
+  label="<__trans phrase='Default Handler'>">
+  <select name="ip_default_subscription_handler" id="ip-default-subscription-handler">
+    <mt:loop name="ip_subscription_handlers">
+      <option value="<mt:var name='key' escape='html'>"<mt:if name='selected'> selected="selected"</mt:if>><mt:var name='label' escape='html'></option>
+    </mt:loop>
+  </select>
+</mtapp:setting>
+
+<mt:if name="ip_subscription_id">
+<mtapp:setting
+  id="ip-client-secret"
+  label="<__trans phrase='Subscription ID'>">
+  <mt:var name="ip_subscription_id" escape="html">
+</mtapp:setting>
+</mt:if>
+
+</mtapp:settinggroup>

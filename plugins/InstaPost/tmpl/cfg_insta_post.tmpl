@@ -1,0 +1,180 @@
+<mt:setvarblock name="page_title"><__trans phrase="Instagram Posting Settings"></mt:setvarblock>
+<mt:setvar name="screen_id" value="cfg_insta_post">
+<mt:setvar name="screen_group" value="settings">
+<mt:setvar name="position_actions_bottom" value="1">
+
+<mt:setvarblock name="system_msg">
+<mt:if name="saved">
+  <mtapp:statusmsg
+     id="saved"
+     class="success"
+     can_close="1">
+    <__trans phrase="Your changes have been saved.">
+  </mtapp:statusmsg>
+</mt:if>
+<mt:if name="removed">
+  <mtapp:statusmsg
+     id="removed"
+     class="success"
+     can_close="1">
+    <__trans phrase="Instagram linkage has been stopped.">
+  </mtapp:statusmsg>
+</mt:if>
+<mt:if name="authorized">
+  <mtapp:statusmsg
+     id="authorized"
+     class="success"
+     can_close="1">
+    <__trans phrase="Authorized and linked with Instagram account.">
+  </mtapp:statusmsg>
+</mt:if>
+<mt:if name="error">
+  <mtapp:statusmsg
+     id="generic-error"
+     class="error"
+     can_close="0">
+    <mt:var name="error" escape="html">
+  </mtapp:statusmsg>
+</mt:if>
+</mt:setvarblock>
+
+<mt:include name="include/header.tmpl" id="header-include">
+
+<style type="text/css">
+  #subscription-handler-configs .subscription-handler-config {
+    display: none;
+  }
+</style>
+<mt:setvarblock name="jq_js_include" append="1">
+    (function($) {
+      var toggleConfigForm = function() {
+        var selected = $('#ip-subscription-handler').val();
+        var selector = '#subscription-handler-config-' + selected;
+        console.log(selector);
+        $('#subscription-handler-configs .subscription-handler-config').hide();
+        $(selector).fadeIn('fast');
+      };
+      toggleConfigForm();
+      $('#ip-subscription-handler').change(toggleConfigForm);
+    })(jQuery);
+</mt:setvarblock>
+
+
+<mt:ignore>Not ready all on system</mt:ignore>
+<mt:if name="state" eq="not_ready">
+
+  <p><__trans phrase="Instagram subscription not yet set up."></p>
+  <mt:if name="is_administer">
+    <p><a class="save action primary button" href="<mt:var name='cfg_web_services_uri' escape='html'>#insta-post-config"><__trans phrase="Set Up Subscription"></a></p>
+  <mt:else>
+    <p><__trans phrase="Please ask to an administrator."></p>
+  </mt:if>
+  </p>
+
+<mt:else>
+
+  <mt:ignore>Ready</mt:ignore>
+  <mt:if name="state" eq="ready">
+
+    <form method="post" action="<mt:var name="script_url">">
+      <input type="hidden" name="__mode" value="save_cfg_insta_post" id="__mode" />
+      <input type="hidden" name="_type" value="config" id="_type" />
+      <input type="hidden" name="blog_id" value="<mt:var name="blog_id" default="0">" />
+    <mt:if name="id">
+      <input type="hidden" name="id" value="<mt:var name="id" escape="html">" />
+    </mt:if>
+      <input type="hidden" name="magic_token" value="<mt:var name="magic_token">" id="magic_token" />
+      <input type="hidden" name="return_args" value="<mt:var name="return_args">" id="return_args" />
+
+      <mt:if name="ip_username">
+      <mtapp:setting
+         id="name"
+         label="<__trans phrase="Instagram Username">"
+         show_hint="1"
+         hint="<__trans phrase='If you want to change, authorize again.'>">
+         <div><mt:var name="ip_username" escape="html"></div>
+      </mtapp:setting>
+      </mt:if>
+
+      <mtapp:setting
+        id="ip-subscripiton-handler"
+        label="<__trans phrase='Subscription Handler'>">
+        <select name="subscription_handler" id="ip-subscription-handler">
+          <mt:loop name="ip_subscription_handlers">
+            <option value="<mt:var name='key' escape='html'>"<mt:if name='selected'> selected="selected"</mt:if>><mt:var name='label' escape='html'></option>
+          </mt:loop>
+        </select>
+      </mtapp:setting>
+
+      <div id="subscription-handler-configs">
+      <mt:loop name="ip_subscription_handlers">
+        <div class="subscription-handler-config" id="subscription-handler-config-<mt:var name='key'>">
+        <mtapp:settinggroup id="$key">
+          <mt:var name="config_template" mteval="1">
+        </mtapp:settinggroup>
+        </div>
+      </mt:loop>
+      </div>
+
+    <mt:setvarblock name="action_buttons">
+      <button
+         type="submit"
+         accesskey="s"
+         title="<__trans phrase="Save (s)">"
+         class="save action primary button">
+        <__trans phrase="Save">
+      </button>
+    </mt:setvarblock>
+
+    <mt:include name="include/actions_bar.tmpl" bar_position="bottom" hide_pager="1" settings_bar="1">
+    </form>
+
+    <mt:if name="this_blog">
+    <h2><__trans phrase="Authorize Again"></h2>
+    <p><__trans phrase="You can authorize again."></p>
+    <p>
+      <__trans phrase="If you want to switch linked Instagram user, confirm logged out from Instagram at first:">
+      <a href="http://instagram.com/" target="_blank"><__trans phrase="Instagram"></a>
+    </p>
+
+    <mt:setvar name="authorizable" value="1">
+    </mt:if>
+  </mt:if>
+
+  <mt:if name="state" eq="different_blog">
+    <p><__trans phrase='You are already authorized but you configured in another blog or website.'></p>
+    <p><span><__trans phrase='Instagram posts to another blog: '></span>
+      <mt:if name="current_blog_link">
+        <a href="<mt:var name='current_blog_link' escape='html'>"><mt:var name="current_blog" escape="html"></a>
+      <mt:else>
+        <span><__trans phrase="Unknown blog"></span>
+      </mt:if>
+    </p>
+
+    <h2><__trans phrase="Switch to This Blog or Website"></h2>
+    <p><__trans phrase="Or you can authorize to stop posting to [_1], and configure again in this blog or website." params="<mt:var name='current_blog' escape='html'>"></p>
+    </p>
+
+  </mt:if>
+
+  <mt:if name="state" eq="different_subscription">
+  <p><__trans phrase="You already linked to Instagram, but API subscription id changed by system administrator and the linkage has lost."></p>
+  <p><__trans phrase="Please authorize again."></p>
+  </mt:if>
+
+  <mt:if name="state" eq="not_authorized">
+  <p><__trans phrase="You have never authorized by your Instagram account."></p>
+  </mt:if>
+
+  <a class="action primary button" href="<mt:var name='oauth2_uri' escape='html'>"><__trans phrase="Start Authorization"></a>
+
+  <h2><__trans phrase="Stop Linkage"></h2>
+  <p><__trans phrase="If you want to stop Instagram posting, click the following button."></p>
+
+  <a class="action warning button" href="<mt:var name='remove_uri' escape='html'>" onclick="return confirm('<__trans phrase="Are you sure to stop Instagram linkage?">');"><__trans phrase="Stop Instagram Linkage"></a>
+
+</mt:if>
+
+
+<mt:include name="include/footer.tmpl" id="footer-include">
+

@@ -1,0 +1,83 @@
+id: InstaPost
+name: InstaPost
+description: <__trans phrase="Posts entry from Instagram with the realtime API.">
+version: 0.9.3
+schema_version: 0.18
+l10n_class: MT::InstaPost::L10N
+
+config_settings:
+  InstaPostScript:
+    default: mt-insta-post.cgi
+  InstaPostEmbedWidth:
+    default: 612
+  InstaPostEmbedHeight:
+    default: 710
+  InstaPostMailSilent:
+    default: 0
+
+settings:
+  ip_client_id:
+    Default:
+    Scope: system
+  ip_client_secret:
+    Default:
+    Scope: system
+  ip_subscription_id:
+    Default:
+    Scope: system
+  ip_verify_token:
+    Default:
+    Scope: system
+  ip_last_error:
+    Default:
+    Scope: system
+  ip_default_subscription_handler:
+    Default: simple_post
+    Scope: system
+  ip_default_subscription_handler_config_json:
+    Default: {}
+    Scope: system
+
+object_types:
+  author.insta_post: MT::InstaPost::Author
+  entry:
+    ip_media_id: string(64) indexed
+
+web_services:
+  InstaPost:
+    config_template:
+      code: $InstaPost::MT::InstaPost::CMS::web_service_template
+    save_config:
+      code: $InstaPost::MT::InstaPost::CMS::save_web_service_config
+
+default_templates:
+  base_path: templates/global
+  global:email:
+    ip_email_error:
+      label: InstaPost Error Email
+    ip_simple_post_email_confirm:
+      label: InstaPost Simple Post Email - Confirm
+    ip_simple_post_email_complete:
+      label: InstaPost Simple Post Email - Complete
+
+insta_post:
+  subscription_handlers:
+    simple_post:
+      label: Simple Post
+      order: 1000
+      package: MT::InstaPost::Subscription::Handler::SimplePost
+      config_template: subscription_handlers/simple_post.tmpl
+
+applications:
+  insta_post:
+    handler: 'MT::InstaPost::App'
+    cgi_path: sub { MT->config->CGIPath }
+    script: sub { MT->config('InstaPostScript') }
+    methods: $InstaPost::MT::InstaPost::App::core_methods
+  cms:
+    methods:
+      cfg_insta_post: $InstaPost::MT::InstaPost::CMS::cfg_insta_post
+      save_cfg_insta_post: $InstaPost::MT::InstaPost::CMS::save_cfg_insta_post
+      ip_oauth2_callback: $InstaPost::MT::InstaPost::CMS::oauth2_callback
+      remove_cfg_insta_post: $InstaPost::MT::InstaPost::CMS::remove_cfg_insta_post
+    menus: $InstaPost::MT::InstaPost::CMS::menus

@@ -1,0 +1,11 @@
+<__trans_section component="InstaPost"><__trans phrase="InstaPost Error"><mt:ignore><__trans phrase="THE FIRST LINE IS SUBJECT"></mt:ignore>
+<__trans phrase="InstaPost got an error:">
+
+<mt:var name="message">
+
+<mt:if name="user"><__trans phrase="The user:"> <mt:var name="user"><mt:if name="edit_user_url">( <mt:var name="edit_user_url"> )</mt:if>
+</mt:if><mt:if name="data"><__trans phrase="The data:">
+<mt:var name="data">
+</mt:if>
+
+<mt:include module="<__trans phrase='Mail Footer'>"></__trans_section>

@@ -1,0 +1,18 @@
+<__trans_section component="InstaPost">
+
+  <mtapp:setting
+    id="publish"
+    label="<__trans phrase='Publish Entry'>">
+    <div>
+      <label>
+        <input type="radio" name="ip_save_as_draft" value="0"<mt:unless name="ip_save_as_draft"> checked="checked"</mt:unless>>
+        <span><__trans phrase="Publish at once"></span>
+      </label>
+      <label>
+        <input type="radio" name="ip_save_as_draft" value="1"<mt:if name="ip_save_as_draft"> checked="checked"</mt:if>>
+        <span><__trans phrase="Save as a draft"></span>
+      </label>
+    </div>
+  </mtapp:setting>
+
+</__trans_section>
